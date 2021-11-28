@@ -10,6 +10,7 @@ function App() {
     name: "miserables",
     data: DATASET.miserables,
   });
+  const [changeFlag,setChangeFlag]=useState(0);
 
   return (
     <div
@@ -35,12 +36,17 @@ function App() {
           updateLayoutParameters={(layoutParams) => {
             setLayoutParameters(layoutParams);
           }}
+          changeFlag={changeFlag}
+          updateChangeFlag={(flag)=>{
+            setChangeFlag(flag);
+          }}
         />
       </div>
       <MainCanvas
         layoutType={layoutType}
         data={graphData.data}
         layoutParameters={layoutParameters}
+        changeFlag={changeFlag}
       />
     </div>
   );
