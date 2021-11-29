@@ -11,10 +11,11 @@ const parameterFormItem = (
   params,
   childLevel,
   layoutParameters,
-  onChangeLayoutParams
+  onChangeLayoutParams,
+  updateLayoutParameters
 ) => {
   if (params.type === "switch") {
-    // console.log('key:', key, 'layoutParameters:', layoutParameters)
+    //console.log('key:', key, 'layoutParameters:', layoutParameters)
     return (
       <div key={key}>
         <ConfigContainer key={key} childLevel={childLevel}>
@@ -28,6 +29,7 @@ const parameterFormItem = (
             size="small"
             onChange={(value) => {
               onChangeLayoutParams({ [key]: value });
+              console.log(layoutParameters[key]);
             }}
           >
             {" "}
@@ -35,14 +37,15 @@ const parameterFormItem = (
         </ConfigContainer>
         {params.children && layoutParameters[key] === true
           ? Object.entries(params.children).map(([child_key, child_value]) => {
-              return parameterFormItem(
-                child_key,
-                child_value,
-                childLevel + 1,
-                layoutParameters,
-                onChangeLayoutParams
-              );
-            })
+            return parameterFormItem(
+              child_key,
+              child_value,
+              childLevel + 1,
+              layoutParameters,
+              onChangeLayoutParams,
+              updateLayoutParameters
+            );
+          })
           : null}
       </div>
     );
@@ -122,12 +125,12 @@ function Configs({
   setGraphData,
   layoutParameters,
   updateLayoutParameters,
+  changeFlag,//用于判断是否需要重新渲染
+  updateChangeFlag
 }) {
   const onChangeLayoutParams = (newParam) => {
-    // console.log(layoutParameters, newParam)
     updateLayoutParameters({ ...layoutParameters, ...newParam });
   };
-  // console.log('layoutParameters:', layoutParameters)
 
   return (
     <div
@@ -161,6 +164,7 @@ function Configs({
         <ConfigContainer topBorder={false}>
           <span>Dataset: </span>
           <Select
+            defaultValue={graphData.name}
             value={graphData.name}
             size={"small"}
             onChange={(val) => {
@@ -215,20 +219,27 @@ function Configs({
               Click to Upload
             </Button>
           </Upload>
-          {/* <Button size={"small"} type={"primary"}>
+          <Button size={"small"} type={"primary"} onClick={() => {
+            console.log(layoutParameters);
+            updateChangeFlag(changeFlag + 1);
+            //console.log(changeFlag);
+          }
+          }>
             Refresh
-          </Button> */}
+          </Button>
         </div>
       </div>
       <div style={{ margin: 5, fontWeight: "bold" }}>Layout parameters</div>
       {Object.entries(LAYOUT_CONFIG.parameters[layoutType]).map(
         ([key, value]) => {
+          //console.log(key,value);
           return parameterFormItem(
             key,
             value,
             1,
             layoutParameters,
-            onChangeLayoutParams
+            onChangeLayoutParams,
+            updateLayoutParameters
           );
         }
       )}
