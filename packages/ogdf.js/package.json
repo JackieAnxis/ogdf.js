@@ -23,7 +23,7 @@
     },
     "scripts": {
         "test": "jest --runInBand --detectOpenHandles",
-        "build": "webpack",
+        "build": "webpack --config webpack.config.js",
         "lint": "eslint src/index.js",
         "watch": "webpack --watch"
     },
