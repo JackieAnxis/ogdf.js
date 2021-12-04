@@ -3,8 +3,8 @@ import * as ogdf from 'ogdfjs'
 import React, { useEffect, useRef } from 'react'
 
 const LAYOUT_MAP = {
-    fm3: ogdf.layouts.energybased.fm3,
-    sugi: ogdf.layouts.layered.sugi
+    fm3: ogdf.layouts.energybased.FMMMLayout,
+    sugi: ogdf.layouts.layered.SugiyamaLayout
 }
 
 function MainCanvas({ layoutType, data, layoutParameters }) {
