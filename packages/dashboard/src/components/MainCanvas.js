@@ -7,10 +7,9 @@ const LAYOUT_MAP = {
     sugi: ogdf.layouts.layered.SugiyamaLayout
 }
 
-function MainCanvas({ layoutType, data, layoutParameters }) {
+function MainCanvas({ layoutType, data, layoutParameters, changeFlag }) {
     const ref = useRef(null)
     // console.log('layoutParameters:', layoutParameters)
-
     useEffect(() => {
         if (!data) {
             return
@@ -52,7 +51,7 @@ function MainCanvas({ layoutType, data, layoutParameters }) {
         return () => {
             netv.dispose()
         }
-    }, [data, layoutParameters, layoutType])
+    }, [changeFlag])
 
     return <div ref={ref}></div>
 }
