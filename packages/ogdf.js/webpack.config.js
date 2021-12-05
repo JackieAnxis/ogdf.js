@@ -3,6 +3,14 @@ const path = require('path')
 module.exports = {
     mode: 'development',
     entry: { ogdf: './src/index.js' },
+    module: {
+        rules: [
+            {
+                test: /\.js?$/,
+                loader: 'babel-loader'
+            }
+        ]
+    },
     output: {
         libraryTarget: 'umd',
         library: 'ogdf',
