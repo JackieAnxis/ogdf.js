@@ -12,13 +12,13 @@ const parameterFormItem = (
   childLevel,
   layoutParameters,
   onChangeLayoutParams,
-  updateLayoutParameters
+  updateLayoutParameters,
+  fatherParam,//新增，存储的有两类：①该项父module的构造函数new出来的对象；②null
 ) => {
-  if (params.type === "switch") {
-    //console.log('key:', key, 'layoutParameters:', layoutParameters)
+  if (params.type === "BOOL") {
     return (
       <div key={key}>
-        <ConfigContainer key={key} childLevel={childLevel}>
+        <ConfigContainer key={key} childLevel={childLevel} fatherParam={fatherParam} >
           <span>{key}: </span>
           <Switch
             defaultChecked={
@@ -28,55 +28,81 @@ const parameterFormItem = (
             }
             size="small"
             onChange={(value) => {
-              onChangeLayoutParams({ [key]: value });
-              console.log(layoutParameters[key]);
-            }}
+              if (fatherParam != null) {
+                fatherParam[key] = value;
+              }
+              else
+                onChangeLayoutParams({ [key]: value });
+            }
+            }
           >
             {" "}
           </Switch>
         </ConfigContainer>
-        {params.children && layoutParameters[key] === true
-          ? Object.entries(params.children).map(([child_key, child_value]) => {
-            return parameterFormItem(
-              child_key,
-              child_value,
-              childLevel + 1,
-              layoutParameters,
-              onChangeLayoutParams,
-              updateLayoutParameters
-            );
-          })
-          : null}
       </div>
     );
-  } else if (params.type === "float" || params.type === "integer") {
+  } else if (params.type === "DOUBLE") {
     return (
-      <ConfigContainer key={key} childLevel={childLevel}>
+      <ConfigContainer key={key} childLevel={childLevel} fatherParam={fatherParam} >
+        <span>{key}: </span>
+        <InputSlider
+          step={0.01}
+          //step={1}
+          size="small"
+          defaultValue={params.default}
+          min={params.range[0] == "-Infinity" ? (params.default==0?-100:(-1)*Math.abs(params.default) * 5) : params.range[0]}
+          max={params.range[1] == "Infinity" ? (params.default==0?100:Math.abs(params.default) * 5): params.range[1]}
+          // min={0}
+          // max={100}
+          onChange={(value) => {
+            if (fatherParam != null) {
+              fatherParam[key] = value;
+            }
+            else
+              onChangeLayoutParams({ [key]: value });
+          }}
+        />
+      </ConfigContainer>
+    );
+  } else if (params.type === "INT") {
+    return (
+      <ConfigContainer key={key} childLevel={childLevel} fatherParam={fatherParam} >
         <span>{key}: </span>
         <InputSlider
           step={1}
           size="small"
           defaultValue={params.default}
-          min={params.min}
-          max={params.max}
+          min={params.range[0] == "-Infinity" ? (params.default==0?-100:(-1)*Math.abs(params.default) * 5) : params.range[0]}
+          max={params.range[1] == "Infinity" ? (params.default==0?100:Math.abs(params.default) * 5): params.range[1]}
+          // min={0}
+          // max={100}
           onChange={(value) => {
-            onChangeLayoutParams({ [key]: value });
+            if (fatherParam != null) {
+              fatherParam[key] = value;
+              console.log(fatherParam);
+            }
+            else
+              onChangeLayoutParams({ [key]: value });
           }}
         />
       </ConfigContainer>
     );
-  } else if (params.type === "select") {
+  } else if (params.type === "CATEGORICAL") {
     return (
-      <ConfigContainer key={key} childLevel={childLevel}>
+      <ConfigContainer key={key} childLevel={childLevel} fatherParam={fatherParam} >
         <span>{key}: </span>
         <Select
           size={"small"}
           defaultValue={params.default}
           onChange={(value) => {
-            onChangeLayoutParams({ [key]: value });
+            if (fatherParam != null) {
+              fatherParam[key] = value;
+            }
+            else
+              onChangeLayoutParams({ [key]: value });
           }}
         >
-          {params.options.map((option) => {
+          {params.range.map((option) => {
             return (
               <Select.Option key={option} value={option}>
                 {option}
@@ -85,6 +111,86 @@ const parameterFormItem = (
           })}
         </Select>
       </ConfigContainer>
+    );
+  } else if (params.type === "MODULE") {
+    return (
+      <div key={key}>
+        <ConfigContainer key={key} childLevel={childLevel} fatherParam={fatherParam} >
+          <span>{key}: </span>
+          {layoutParameters[key + "Module"] == true ?
+            <Select
+              size={"small"}
+              defaultValue={() => {
+                return params.default.name;
+              }}
+              onChange={(value) => {
+                if (fatherParam != null) {
+                  fatherParam[key] = new params.range[value].constructor();
+                  onChangeLayoutParams({});
+                  console.log(fatherParam[key].configs().value);
+                }
+                else {
+                  console.log(params.range[value]);
+                  onChangeLayoutParams({ [key]: new params.range[value].constructor() });
+                }
+              }}
+            >
+              {params.range.map((option, index) => {
+                return (
+                  <Select.Option key={option.name} value={index}>
+                    {option.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+            : <Switch
+              defaultChecked={false}
+              size="small"
+              onChange={(value) => {
+                if (fatherParam != null) {
+                  fatherParam[key] = new params.default.constructor();
+                  onChangeLayoutParams({ [key + "Module"]: value });
+                }
+                else {
+                  onChangeLayoutParams({ [key + "Module"]: value, [key]: new params.default.constructor() });
+                }
+              }
+              }
+            >
+              {""};
+            </Switch>
+          }
+
+        </ConfigContainer>
+        {fatherParam == null && layoutParameters[key] !== undefined && layoutParameters[key + "Module"] == true
+          ? Object.entries(layoutParameters[key].configs().value.parameters).map(([child_key, child_value]) => {
+            return parameterFormItem(
+              child_key,
+              child_value,
+              childLevel + 1,
+              layoutParameters,
+              onChangeLayoutParams,
+              updateLayoutParameters,
+              fatherParam == null ? layoutParameters[key] : fatherParam[key]
+            );
+          })
+          : null
+        }
+        {fatherParam != null && layoutParameters[key + "Module"] == true
+          ? Object.entries(fatherParam[key].configs().value.parameters).map(([child_key, child_value]) => {
+            return parameterFormItem(
+              child_key,
+              child_value,
+              childLevel + 1,
+              layoutParameters,
+              onChangeLayoutParams,
+              updateLayoutParameters,
+              fatherParam[key]
+            );
+          })
+          : null
+        }
+      </div>
     );
   }
 };
@@ -130,12 +236,13 @@ function Configs({
 }) {
   const onChangeLayoutParams = (newParam) => {
     updateLayoutParameters({ ...layoutParameters, ...newParam });
+    console.log(layoutParameters);
   };
 
   return (
     <div
       style={{
-        width: 350,
+        width: 400,//350
         backgroundColor: "#f8f8f8",
         padding: "10px 5px 10px 5px",
         borderRadius: 5,
@@ -150,6 +257,7 @@ function Configs({
             size={"small"}
             onChange={(val) => {
               updateLayout(val);
+              updateLayoutParameters({});
             }}
           >
             {LAYOUT_CONFIG.layout.options.map((option) => {
@@ -239,7 +347,8 @@ function Configs({
             1,
             layoutParameters,
             onChangeLayoutParams,
-            updateLayoutParameters
+            updateLayoutParameters,
+            null,
           );
         }
       )}

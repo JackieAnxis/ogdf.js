@@ -3,11 +3,25 @@ import * as ogdf from 'ogdfjs'
 import React, { useEffect, useRef } from 'react'
 
 const LAYOUT_MAP = {
+    DavidsonHarel:ogdf.layouts.energybased.DavidsonHarelLayout,
     fm3: ogdf.layouts.energybased.FMMMLayout,
-    sugi: ogdf.layouts.layered.SugiyamaLayout
-}
+    FastMultipoleEmbedder:ogdf.layouts.energybased.FastMultipoleEmbedder,
+    FastMultipoleMultilevelEmbedder:ogdf.layouts.energybased.FastMultipoleMultilevelEmbedder,
+    gem: ogdf.layouts.energybased.GEMLayout,
+    NodeRespecter: ogdf.layouts.energybased.NodeRespecterLayout,
+    PivotMDS: ogdf.layouts.energybased.PivotMDS,
+    SpringEmbedderGridVariant:ogdf.layouts.energybased.SpringEmbedderGridVariant,
+    SpringEmbedderKK:ogdf.layouts.energybased.SpringEmbedderKK,
+    StressMinimization:ogdf.layouts.energybased.StressMinimization,
+    TutteLayout:ogdf.layouts.energybased.TutteLayout,
+  
+    sugi: ogdf.layouts.layered.SugiyamaLayout,
 
-function MainCanvas({ layoutType, data, layoutParameters, changeFlag }) {
+    Planarization:ogdf.layouts.planarity.PlanarizationLayout,
+  PlanarizationGrid:ogdf.layouts.planarity.PlanarizationGridLayout
+  }
+
+function MainCanvas({ layoutType, data, layoutParameters, changeFlag}) {
     const ref = useRef(null)
     // console.log('layoutParameters:', layoutParameters)
     useEffect(() => {
@@ -36,6 +50,7 @@ function MainCanvas({ layoutType, data, layoutParameters, changeFlag }) {
             graph: data,
             parameters: layoutParameters
         })
+        console.log(layout.configs());
         layout.run().then((graph) => {
             // netv.data(graph)
             netv.data(
