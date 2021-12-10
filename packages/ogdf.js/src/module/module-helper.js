@@ -77,8 +77,10 @@ export default function createModule(NAME, MODULE_DIRECTORY) {
                             )
                         } else {
                             this[paramName] =
-                                parameter[paramName] ||
-                                MODULE_DIRECTORY[this.constructor.ModuleName][paramName].default
+                                paramName in parameter
+                                    ? parameter[paramName]
+                                    : MODULE_DIRECTORY[this.constructor.ModuleName][paramName]
+                                          .default
                         }
                     }
                 }
