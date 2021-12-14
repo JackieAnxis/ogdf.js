@@ -134,4 +134,41 @@ describe('Module parameter assignment testing', () => {
         }
         createTesting(ModuleList.GridLayoutPlanRepModule).test(MixedModelLayout)
     })
+    test('Module Parameter Assignment Testing @ HierarchyClusterLayoutModule', () => {
+        const OptimalHierarchyClusterLayout = {
+            fixedLayerDistance: true,
+            layerDistance: 5,
+            nodeDistance: 5,
+            weightBalancing: 0.5,
+            weightClusters: 0.2,
+            weightSegments: 3
+        }
+        createTesting(ModuleList.HierarchyClusterLayoutModule).test(OptimalHierarchyClusterLayout)
+    })
+    test('Module Parameter Assignment Testing @ HierarchyLayoutModule', () => {
+        const FastHierarchyLayout = {
+            fixedLayerDistance: true,
+            layerDistance: 6,
+            nodeDistance: 5
+        }
+        const FastSimpleHierarchyLayout = {
+            balanced: false,
+            downward: false,
+            layerDistance: 55,
+            leftToRight: false,
+            nodeDistance: 200
+        }
+        const OptimalHierarchyLayout = {
+            fixedLayerDistance: true,
+            layerDistance: 5,
+            nodeDistance: 7,
+            weightBalancing: 0.3,
+            weightSegments: 4
+        }
+        createTesting(ModuleList.HierarchyLayoutModule)
+            .test(FastHierarchyLayout)
+            .test(FastSimpleHierarchyLayout)
+            .test(OptimalHierarchyLayout)
+    })
 })
+describe('Module parameter wrongly assignment testing', () => {})
