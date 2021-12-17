@@ -4,7 +4,7 @@ const { PARAMETER_TYPE } = require('../../src/utils/parameter-type')
 describe('Module initialize testing', () => {
     for (let ModuleName in ModuleList) {
         const Module = ModuleList[ModuleName]
-        test('Module Initialize Testing @ ' + Module.BaseModuleName, () => {
+        test('@' + Module.BaseModuleName, () => {
             Module.SubModuleList.forEach((SubModule) => {
                 const subObj = new SubModule()
                 if (SubModule.PARAMETER_DEFINITION === {}) expect(subObj).toBeInstanceOf(SubModule)
@@ -52,12 +52,22 @@ function createTesting(Module) {
             }
             index++
             return tester
+        },
+        catch: (initializer) => {
+            const module = new Module.SubModuleList[index]()
+            for (let param in initializer) {
+                expect(() => {
+                    module[param] = initializer[param]
+                }).toThrow()
+            }
+            index++
+            return tester
         }
     }
     return tester
 }
 describe('Module parameter assignment testing', () => {
-    test('Module Parameter Assignment Testing @ CrossingMinimizationModule', () => {
+    test('@CrossingMinimizationModule', () => {
         const SubgraphPlanarizer = {
             globalInternalLibraryLogLevel: 'Minor',
             globalLogLevel: 'Medium',
@@ -74,7 +84,7 @@ describe('Module parameter assignment testing', () => {
         }
         createTesting(ModuleList.CrossingMinimizationModule).test(SubgraphPlanarizer)
     })
-    test('Module Parameter Assignment Testing @ EdgeInsertionModule', () => {
+    test('@EdgeInsertionModule', () => {
         const FixedEmbeddingInserter = {
             keepEmbedding: true,
             percentMostCrossed: 30,
@@ -99,7 +109,7 @@ describe('Module parameter assignment testing', () => {
             .test(MultiEdgeApproxInserter)
             .test(VariableEmbeddingInserter)
     })
-    test('Module Parameter Assignment Testing @ EmbedderModule', () => {
+    test('@EmbedderModule', () => {
         const EmbedderMaxFace = {
             timeLimit: 100
         }
@@ -123,7 +133,7 @@ describe('Module parameter assignment testing', () => {
             .test(EmbedderOptimalFlexDraw)
             .test(SimpleEmbedder)
     })
-    test('Module Parameter Assignment Testing @ GridLayoutPlanRepModule', () => {
+    test('@GridLayoutPlanRepModule', () => {
         const MixedModelLayout = {
             separation: 30.0,
             augmenter: new ModuleList.AugmentationModule.DfsMakeBiconnected(),
@@ -134,7 +144,7 @@ describe('Module parameter assignment testing', () => {
         }
         createTesting(ModuleList.GridLayoutPlanRepModule).test(MixedModelLayout)
     })
-    test('Module Parameter Assignment Testing @ HierarchyClusterLayoutModule', () => {
+    test('@HierarchyClusterLayoutModule', () => {
         const OptimalHierarchyClusterLayout = {
             fixedLayerDistance: true,
             layerDistance: 5,
@@ -145,7 +155,7 @@ describe('Module parameter assignment testing', () => {
         }
         createTesting(ModuleList.HierarchyClusterLayoutModule).test(OptimalHierarchyClusterLayout)
     })
-    test('Module Parameter Assignment Testing @ HierarchyLayoutModule', () => {
+    test('@HierarchyLayoutModule', () => {
         const FastHierarchyLayout = {
             fixedLayerDistance: true,
             layerDistance: 6,
@@ -171,4 +181,22 @@ describe('Module parameter assignment testing', () => {
             .test(OptimalHierarchyLayout)
     })
 })
-describe('Module parameter wrongly assignment testing', () => {})
+describe('Module parameter wrongly assignment testing', () => {
+    test('@CrossingMinimizationModule', () => {
+        const SubgraphPlanarizer = {
+            globalInternalLibraryLogLevel: 'Chaos', // category not found
+            globalLogLevel: 'Chaos', // category not found
+            globalMinimumLogLevel: 'Chaos', // category not found
+            globalStatisticMode: 10000, // type error
+            localLogLevel: 'Chaos', // category not found
+            localLogMode: 'Chaos', // category not found
+            maxThreads: -10, // out of range
+            permutations: -10, // out of range
+            timeout: 10000, // type error
+            timeLimit: 'SomeErrorType',
+            inserter: new ModuleList.AcyclicSubgraphModule.DfsAcyclicSubgraph(), // module type error
+            subgraph: new ModuleList.AcyclicSubgraphModule.DfsAcyclicSubgraph() // module type error
+        }
+        createTesting(ModuleList.CrossingMinimizationModule).catch(SubgraphPlanarizer)
+    })
+})
