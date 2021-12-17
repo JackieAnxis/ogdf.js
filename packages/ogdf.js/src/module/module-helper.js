@@ -189,6 +189,10 @@ export default function createModule(NAME, MODULE_DIRECTORY) {
                             // range test
                             let type = target.constructor.PARAMETERS[param].type
                             if (type === PARAMETER_TYPE.INT || type === PARAMETER_TYPE.DOUBLE) {
+                                if (typeof value !== 'number')
+                                    throw Error(
+                                        `OGDFTypeError: Parameter ${param} needs a number type, but got ${typeof value}.`
+                                    )
                                 if (
                                     value < target.constructor.PARAMETERS[param].range[0] ||
                                     value > target.constructor.PARAMETERS[param].range[1]
@@ -196,7 +200,16 @@ export default function createModule(NAME, MODULE_DIRECTORY) {
                                     throw Error(
                                         `OGDFOutOfRangeError: Parameter ${param} needs a number between ${target.constructor.PARAMETERS[param].range[0]} and ${target.constructor.PARAMETERS[param].range[1]}, but got ${value}.`
                                     )
+                            } else if (type === PARAMETER_TYPE.BOOL) {
+                                if (typeof value !== 'boolean')
+                                    throw Error(
+                                        `OGDFTypeError: Parameter ${param} needs a boolean type, but got ${typeof value}.`
+                                    )
                             } else if (type === PARAMETER_TYPE.CATEGORICAL) {
+                                if (typeof value !== 'string')
+                                    throw Error(
+                                        `OGDFTypeError: Parameter ${param} needs a string, but got ${typeof value}.`
+                                    )
                                 if (target.constructor.PARAMETERS[param].range.indexOf(value) < 0)
                                     throw Error(
                                         `OGDFCategoryNotFoundError: Parameter ${param} needs one of category in ${target.constructor.PARAMETERS[
