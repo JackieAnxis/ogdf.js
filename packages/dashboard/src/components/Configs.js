@@ -46,7 +46,7 @@ const parameterFormItem = (
       <ConfigContainer key={key} childLevel={childLevel} fatherParam={fatherParam} >
         <span>{key}: </span>
         <InputSlider
-          step={0.01}
+          step={0.0001}
           //step={1}
           size="small"
           defaultValue={params.default}
@@ -242,7 +242,7 @@ function Configs({
   return (
     <div
       style={{
-        width: 400,//350
+        width: 450,//350
         backgroundColor: "#f8f8f8",
         padding: "10px 5px 10px 5px",
         borderRadius: 5,
@@ -254,6 +254,7 @@ function Configs({
           <Select
             defaultValue={LAYOUT_CONFIG.layout.default}
             value={layoutType}
+            style={{width:"250px"}}
             size={"small"}
             onChange={(val) => {
               updateLayout(val);
