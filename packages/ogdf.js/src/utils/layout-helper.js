@@ -3,6 +3,8 @@ import { LayoutModule } from '../module'
 import initOGDF from '../entry/rawogdf'
 import { PARAMETER_TYPE } from './parameter-type'
 import { createWorker } from './worker-helper'
+import createModule from '../module/module-helper'
+import MultilevelLayoutModule from '../layouts/energybased/MultilevelLayout'
 class LayoutRenderer {
     constructor(config) {
         this._parameters = config?.parameters || {}
@@ -200,6 +202,10 @@ const FastMultipoleMultilevelEmbedder = createLayout(
     Graph.BaseGraph
 )
 const GEMLayout = createLayout(LayoutModule.GEMLayout, Graph.NodeLinkGraph)
+const MultilevelLayout = createLayout(
+    createModule('LayoutModule', { MultilevelLayout: MultilevelLayoutModule }).MultilevelLayout,
+    Graph.NodeLinkGraph
+)
 const NodeRespecterLayout = createLayout(LayoutModule.NodeRespecterLayout, Graph.BaseGraph)
 const PivotMDS = createLayout(LayoutModule.PivotMDS, Graph.LinkWeightGraph)
 const PlanarizationGridLayout = createLayout(LayoutModule.PlanarizationGridLayout, Graph.BaseGraph)
@@ -220,6 +226,7 @@ const layouts = {
         FastMultipoleEmbedder,
         FastMultipoleMultilevelEmbedder,
         GEMLayout,
+        MultilevelLayout,
         NodeRespecterLayout,
         PivotMDS,
         SpringEmbedderGridVariant,

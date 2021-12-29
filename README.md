@@ -49,6 +49,7 @@ Some layout algorithms are supported now:
 -   [SpringEmbedderGridVariant](https://ogdf.uos.de/doc/classogdf_1_1_spring_embedder_grid_variant.html): the spring-embedder layout algorithm with force approximation using hte grid variant approach.
 -   [SpringEmbedderKK](https://ogdf.uos.de/doc/classogdf_1_1_spring_embedder_k_k.html): the spring-embedder layout algorithm by Kamada and Kawai.
 -   [StressMinimization](https://ogdf.uos.de/doc/classogdf_1_1_stress_minimization.html): energy-based layout using stress minimization.
+-   [TutteLayout](https://ogdf.uos.de/doc/classogdf_1_1_tutte_layout.html): Tutte's layout algorithm. This algorithm draws a planar graph straight-line without crossings. The idea of the algorithm is to place every vertex into the center of gravity by its neighbours.
 
 ##### Layer-based Layout Algorithms
 
