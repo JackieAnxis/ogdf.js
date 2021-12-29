@@ -22,18 +22,6 @@ initOGDF().then((Module) => {
 })
 ```
 
-Data test:
-
--   [x] BaseGraph
--   [ ] NodeLinkGraph
--   [ ] LinkWeightGraph
--   [ ] NodeLinkWeightGraph
--   [ ] NodeSizeLinkGraph
-
-Implementation test:
-
--   [ ] Not Finished
-
 ## Testing for modules in `module.test`:
 
 ### Module test list
@@ -67,52 +55,6 @@ initOGDF().then((OGDFModule) => {
 module.someParam = param // TEST: if the type of param is not allowed (eg. requires a HierarchyClusterLayoutModule object, but received HierarchyLayoutModule) or out of range (eg. requires a int between 0 to 100, but received 101), the program should throw an error.
 module.someParam // TEST: if an error throwed, the value of someParam shouldn't be changed
 ```
-
-Initialize test:
-
--   [x] All Finished
-
-Static test:
-
--   [ ] Not Finished
-
-Parameter assignment test:
-
--   [x] CrossingMinimizationModule
--   [x] EdgeInsertionModule
--   [x] EmbedderModule
--   [x] GridLayoutPlanRepModule
--   [x] HierarchyClusterLayoutModule
--   [x] HierarchyLayoutModule
--   [ ] InitialPlacer
--   [ ] LayeredCrossMinModule
--   [ ] LayoutModule
--   [ ] LayoutPlanRepModule
--   [ ] MultilevelBuilder
--   [ ] PlanarSubgraphModule
--   [ ] RankingModule
--   [ ] ShellingOrderModule
-
-Error Test:
-
--   [x] CrossingMinimizationModule
--   [ ] EdgeInsertionModule
--   [ ] EmbedderModule
--   [ ] GridLayoutPlanRepModule
--   [ ] HierarchyClusterLayoutModule
--   [ ] HierarchyLayoutModule
--   [ ] InitialPlacer
--   [ ] LayeredCrossMinModule
--   [ ] LayoutModule
--   [ ] LayoutPlanRepModule
--   [ ] MultilevelBuilder
--   [ ] PlanarSubgraphModule
--   [ ] RankingModule
--   [ ] ShellingOrderModule
-
-Implementation test:
-
--   [x] All Finished
 
 ## Testing for layouts in `layout.test`:
 
@@ -152,24 +94,3 @@ layout.run().then((graph1) => {
     })
 })
 ```
-
-Initialize test:
-
--   [ ] DavidsonHarelLayout
--   [ ] FMMMLayout
--   [ ] FastMultipoleEmbedder
--   [ ] FastMultipoleMultilevelEmbedder
--   [ ] GEMLayout
--   [ ] NodeRespecterLayout
--   [ ] PivotMDS
--   [ ] SpringEmbedderGridVariant
--   [ ] SpringEmbedderKK
--   [ ] StressMinimization
--   [ ] TutteLayout
--   [ ] SugiyamaLayout
--   [ ] PlanarizationGridLayout
--   [ ] PlanarizationLayout
-
-Worker test:
-
--   [ ] Not Finished

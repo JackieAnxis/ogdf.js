@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 const ModuleList = require('../../src/module')
 const { PARAMETER_TYPE } = require('../../src/utils/parameter-type')
+const initOGDF = require('../../src/entry/rawogdf').default
+const moduleTestCases = []
 describe('Module initialize testing', () => {
     for (let ModuleName in ModuleList) {
         const Module = ModuleList[ModuleName]
@@ -21,10 +23,29 @@ describe('Module initialize testing', () => {
                         }
                     }
                 }
+                moduleTestCases.push(subObj)
             })
         })
     }
 })
+runModuleTestCases()
+function malloc(Module, staticParams, parameters, PARAMETER_DEFINITION) {
+    let params = Object.keys(parameters).map((name) => {
+        let type = PARAMETER_DEFINITION[name].type
+        if (type === PARAMETER_TYPE.CATEGORICAL) {
+            return PARAMETER_DEFINITION[name].range.indexOf(parameters[name])
+        } else if (type === PARAMETER_TYPE.MODULE) {
+            return malloc(
+                Module,
+                parameters[name].static,
+                parameters[name].parameters,
+                parameters[name].PARAMETER_DEFINITION
+            )
+        } else return parameters[name]
+    })
+    let buffer = Module[`_${staticParams.BaseModuleName}_${staticParams.ModuleName}`](...params)
+    return buffer
+}
 function createTesting(Module) {
     let index = 0
     const tester = {
@@ -65,6 +86,24 @@ function createTesting(Module) {
         }
     }
     return tester
+}
+function runModuleTestCases() {
+    it('Testing module implementation', () => {
+        expect.assertions(moduleTestCases.length)
+        return initOGDF().then((OGDFModule) => {
+            for (let module of moduleTestCases) {
+                const json = module.json()
+                expect(
+                    typeof malloc(
+                        OGDFModule,
+                        json.static,
+                        json.parameters,
+                        json.PARAMETER_DEFINITION
+                    )
+                ).toEqual('number')
+            }
+        })
+    })
 }
 describe('Module parameter assignment testing', () => {
     test('@CrossingMinimizationModule', () => {
@@ -179,6 +218,62 @@ describe('Module parameter assignment testing', () => {
             .test(FastHierarchyLayout)
             .test(FastSimpleHierarchyLayout)
             .test(OptimalHierarchyLayout)
+    })
+    test('@InitialPlacer', () => {
+        const BarycenterPlacer = {
+            randomOffset: false,
+            weightedPositionPriority: true
+        }
+        const CirclePlacer = {
+            circleSize: 2,
+            nodeSelection: 'Old',
+            radiusFixed: true,
+            randomOffset: false
+        }
+        const MedianPlacer = {
+            randomOffset: false
+        }
+        const RandomPlacer = {
+            randomOffset: false,
+            circleSize: 1
+        }
+        const SolarPlacer = {
+            randomOffset: false
+        }
+        const ZeroPlacer = {
+            randomRange: 0.5,
+            randomOffset: false
+        }
+        createTesting(ModuleList.InitialPlacer)
+            .test(BarycenterPlacer)
+            .test(CirclePlacer)
+            .test(MedianPlacer)
+            .test(RandomPlacer)
+            .test(SolarPlacer)
+            .test(ZeroPlacer)
+    })
+    test('@LayeredCrossMinModule', () => {
+        const BarycenterHeuristic = {}
+        const GlobalSifting = {
+            nRepeats: 5
+        }
+        const GreedyInsertHeuristic = {}
+        const GreedySwitchHeuristic = {}
+        const GridSifting = {
+            verticalStepsBound: 3
+        }
+        const MedianHeuristic = {}
+        const SiftingHeuristic = {}
+        const SplitHeuristic = {}
+        createTesting(ModuleList.LayeredCrossMinModule)
+            .test(BarycenterHeuristic)
+            .test(GlobalSifting)
+            .test(GreedyInsertHeuristic)
+            .test(GreedySwitchHeuristic)
+            .test(GridSifting)
+            .test(MedianHeuristic)
+            .test(SiftingHeuristic)
+            .test(SplitHeuristic)
     })
 })
 describe('Module parameter wrongly assignment testing', () => {
